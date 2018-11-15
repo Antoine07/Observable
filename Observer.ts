@@ -1,15 +1,3 @@
-// Exercice
-/*
-Voici deux interfaces créez un sujet User qui implémente l'interface ISubject
-
-Le sujet sera donc observé par des Observers Log et Model
-
-User possède une méthode create, c'est quand cette méthode est appelée que tous les obersers
-sont notifiés de ce fait et affiche un message (pour l'exemple)
-
-Trouvez un exemple simple pour implémenter ce design pattern pour le rendre effectif.
-
-*/
 
 
 interface IObserver {
@@ -25,16 +13,46 @@ interface ISubject {
 // Subject 
 class User implements ISubject {
 
-    // TODO ...
+    private _observers: Array<IObserver> = [];
+    private _name: string;
+
+    set name(name: string) { this._name = name; }
+    get name() { return this._name; }
+
+    attach(observer: IObserver) {
+        this._observers.push(observer);
+    }
+
+    detach(observer: IObserver) { }
+
+    notify() {
+        this._observers.forEach(o => { o.update(this); })
+    }
+
+    create(name: string) {
+        this.name = name;
+
+        this.notify();
+    }
 
 }
 
 class Log implements IObserver {
-  // dit quelque chose
+    update(subject) {
+        console.log(subject.name)
+    }
 }
 
 class Model implements IObserver {
-  // dit quelque chose
+    update(subject) {
+        console.log(subject.name)
+    }
 }
 
 // Testez le code ici ...
+
+let user = new User;
+user.attach(new Model);
+user.attach(new Log);
+
+user.create('Alan');
